@@ -40,8 +40,12 @@ class _LoginPageState extends State<LoginPage> {
       });
       return true;
     } else {
+      setState(() {
+        logging = false;
+      });
       // Authentication failed
-      throw Exception('Failed to authenticate user');
+     // throw Exception('Failed to authenticate user');
+      return false;
     }
   }
 
