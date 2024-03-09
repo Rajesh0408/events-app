@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   File? _imageFile;
   String? _imageUrl;
   bool _uploadingImage = false;
+  bool _submitting = false;
   String? jwt="";
 
   @override
@@ -58,6 +59,29 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ],
+       leading:  IconButton(icon: Icon(Icons.refresh), onPressed: () {
+         setState(() {
+           e_id_controller.clear();
+           title_controller.clear();
+           details_controller.clear();
+           date_controller.clear();
+           time_controller.clear();
+           prize_money_controller.clear();
+           entry_pass_controller.clear();
+           image_link_controller.clear();
+           eid= null;
+           title = null;
+           details =null;
+           Date = null;
+           time = null;
+           prize_money = null;
+           entry_pass =null;
+           image_link = null;
+           _imageFile = null;
+           _imageUrl = null;
+           _submitting = false;
+         });
+       },),
       ),
       body: ListView(
         children: [
@@ -97,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                       filled: true,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0)),
-                      hintText: 'Enter the E_ID'),
+                      hintText: 'E-0000'),
                 ),
               ),
               Padding(
@@ -111,7 +135,7 @@ class _HomePageState extends State<HomePage> {
                       filled: true,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0)),
-                      hintText: 'Enter the title'),
+                      hintText: 'Title'),
                 ),
               ),
               Padding(
@@ -125,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                       filled: true,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0)),
-                      hintText: 'Enter the Details'),
+                      hintText: 'Details'),
                 ),
               ),
               Padding(
@@ -140,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                       filled: true,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0)),
-                      hintText: 'Enter the Time'),
+                      hintText: '00:00:00'),
                 ),
               ),
               Padding(
@@ -155,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                       filled: true,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0)),
-                      hintText: 'Enter the Prize Money'),
+                      hintText: '000000'),
                 ),
               ),
               Padding(
@@ -170,7 +194,7 @@ class _HomePageState extends State<HomePage> {
                       filled: true,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0)),
-                      hintText: 'Enter the Entry Pass'),
+                      hintText: '00000'),
                 ),
               ),
               Padding(
@@ -220,6 +244,11 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.all(20.0),
                   child: ElevatedButton(
                     onPressed: () async {
+                      setState(() {
+                        _submitting = true;
+                      });
+
+
                       image_link = _imageUrl;
 
                       if (eid == null ||
@@ -230,6 +259,7 @@ class _HomePageState extends State<HomePage> {
                           entry_pass == null ||
                           image_link == null ||
                           Date == null) {
+                        _submitting = false;
                         ScaffoldMessenger.of(context)
                             .showSnackBar(const SnackBar(
                           content: Text("Please fill the above details"),
@@ -265,25 +295,31 @@ class _HomePageState extends State<HomePage> {
                             image_link = null;
                             _imageFile = null;
                             _imageUrl = null;
+                            _submitting = false;
                           });
 
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
-                            content: Text("Data submitted successfully"),
+
+                            content: Text("Data submitted successfully :) "),
                             backgroundColor: Colors.green,
                             duration: Duration(seconds: 2),
                           ));
                         } else {
+                          setState(() {
+                            _submitting = false;
+                          });
+
                           ScaffoldMessenger.of(context)
                               .showSnackBar(const SnackBar(
-                            content: Text("Data Submission Fails"),
+                            content: Text("Submission Fails :( Please enter the above details correctly!!"),
                             backgroundColor: Colors.redAccent,
                             duration: Duration(seconds: 2),
                           ));
                         }
                       }
                     },
-                    child: const Text('Submit'),
+                    child: _submitting?  CircularProgressIndicator() : const Text('Submit'),
                   ),
                 ),
             ],
@@ -300,7 +336,7 @@ class _HomePageState extends State<HomePage> {
         initialDate: selectedDate,
         firstDate: DateTime(2020, 8),
         lastDate: DateTime(2101));
-    if (picked != null && picked != selectedDate) {
+    if (picked != null ) {
       setState(() {
         selectedDate = picked;
         Date = "${selectedDate.toLocal()}".split(' ')[0];
